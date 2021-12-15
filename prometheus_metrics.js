@@ -35,14 +35,17 @@ export default class MetricsManager {
     const res = {};
     for (const [meta, metric] of this.metrics.entries()) {
       if (!res[meta.tags.get("host")]) {
-        res[meta.tags.get("host")] = {};
+        res[meta.tags.get("host")] = {
+          tags: Object.fromEntries(meta.tags.entries()),
+          metrics: {},
+        };
       }
       if (meta.name == "ping_alive") {
-        res[meta.tags.get("host")][meta.name] = metric.value == 1;
+        res[meta.tags.get("host")].metrics[meta.name] = metric.value == 1;
       } else {
-        res[meta.tags.get("host")][meta.name] = metric.value;
+        res[meta.tags.get("host")].metrics[meta.name] = metric.value;
       }
     }
-    return res;
+    return Object.values(res);
   }
 }
