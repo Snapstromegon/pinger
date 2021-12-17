@@ -68,9 +68,9 @@ async function pingAllHosts() {
     const probe = await ping.promise.probe(host);
     if (probe.alive) {
       metrics.lastPong.value = Date.now() / 1000;
-      metrics.pingsAlive++;
+      metrics.pingsAlive.value++;
     }
-    metrics.pingsTotal++;
+    metrics.pingsTotal.value++;
     metrics.pingTime.value = probe.time / 1000;
     metrics.pingAlive.value = probe.alive ? 1 : 0;
   });
