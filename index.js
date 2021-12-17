@@ -49,12 +49,16 @@ for (const host of args.hosts) {
     pingAlive: new Metric(0),
     lastPing: new Metric(0),
     lastPong: new Metric(0),
+    pingsAlive: new Metric(0),
+    pingsTotal: new Metric(0),
   };
   hostMetrics.set(host, metrics);
   metricMgr.addMetric("ping_time_duration", { host }, metrics.pingTime);
   metricMgr.addMetric("ping_alive", { host }, metrics.pingAlive);
   metricMgr.addMetric("ping_last_ping_seconds", { host }, metrics.lastPing);
   metricMgr.addMetric("ping_last_pong_seconds", { host }, metrics.lastPong);
+  metricMgr.addMetric("ping_pings_alive", { host }, metrics.pingsAlive);
+  metricMgr.addMetric("ping_pings_total", { host }, metrics.pingsTotal);
 }
 
 async function pingAllHosts() {
@@ -64,7 +68,9 @@ async function pingAllHosts() {
     const probe = await ping.promise.probe(host);
     if (probe.alive) {
       metrics.lastPong.value = Date.now() / 1000;
+      metrics.pingsAlive++;
     }
+    metrics.pingsTotal++;
     metrics.pingTime.value = probe.time / 1000;
     metrics.pingAlive.value = probe.alive ? 1 : 0;
   });
